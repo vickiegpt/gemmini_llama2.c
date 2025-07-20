@@ -1,0 +1,39 @@
+# Makefile for Gemmini-accelerated Llama2.c
+CC = gcc
+CFLAGS = -O3 -march=native -fopenmp -Wall
+LDFLAGS = -lm
+
+# Gemmini-specific paths and flags
+GEMMINI_ROOT ?= /path/to/gemmini
+GEMMINI_INCLUDES = -I$(GEMMINI_ROOT)/include -I./include
+GEMMINI_LIBS = -L$(GEMMINI_ROOT)/lib -lgemmini
+
+# Define ELEM_SCALE based on your Gemmini configuration
+# For int8 quantization, typically 127.0
+DEFINES = -DELEM_SCALE=127.0
+
+# Targets
+all: gemmini_run
+
+gemmini_run: gemmini_run.c
+	$(CC) $(CFLAGS) $(GEMMINI_INCLUDES) $(DEFINES) $< -o $@ $(LDFLAGS) $(GEMMINI_LIBS)
+
+# Original run.c for comparison
+run: run.c
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+
+# Test target
+test: gemmini_run
+	./gemmini_run stories15M.bin -i "Once upon a time"
+
+# Benchmark target
+benchmark: gemmini_run run
+	@echo "Running original implementation..."
+	time ./run stories15M.bin -n 256 -i "Once upon a time"
+	@echo "\nRunning Gemmini-accelerated implementation..."
+	time ./gemmini_run stories15M.bin -n 256 -i "Once upon a time"
+
+clean:
+	rm -f gemmini_run run
+
+.PHONY: all test benchmark clean
