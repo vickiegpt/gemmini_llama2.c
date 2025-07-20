@@ -1,12 +1,12 @@
 # Makefile for Gemmini-accelerated Llama2.c
-CC = gcc
-CFLAGS = -O3 -march=native -fopenmp -Wall
+CC = riscv64-linux-gnu-gcc
+CFLAGS = -O3 -I/usr/riscv64-linux-gnu/include/ -L/usr/riscv64-linux-gnu/lib/ -DPREALLOCATE=1 -DMULTITHREAD=1 -mcmodel=medany -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -fno-tree-loop-distribute-patterns -march=rv64gc -Wa,-march=rv64gc -I/root/gemmini-rocc-tests/riscv-tests -I/root/gemmini-rocc-tests/riscv-tests/env -I/root/gemmini-rocc-tests -I/root/gemmini-rocc-tests/riscv-tests/benchmarks/common -Wall -static
 LDFLAGS = -lm
 
 # Gemmini-specific paths and flags
-GEMMINI_ROOT ?= /path/to/gemmini
-GEMMINI_INCLUDES = -I$(GEMMINI_ROOT)/include -I./include
-GEMMINI_LIBS = -L$(GEMMINI_ROOT)/lib -lgemmini
+GEMMINI_ROOT ?= /root/gemmini-rocc-tests
+GEMMINI_INCLUDES = -I$(GEMMINI_ROOT)/include -I./include -I$(GEMMINI_ROOT)
+GEMMINI_LIBS = -L$(GEMMINI_ROOT)/lib
 
 # Define ELEM_SCALE based on your Gemmini configuration
 # For int8 quantization, typically 127.0

@@ -13,8 +13,8 @@
     #include <unistd.h>
     #include <sys/mman.h>
 #endif
-#include "include/gemmini.h"
-#include "include/gemmini_nn.h"
+#include "gemmini.h"
+#include "gemmini_nn.h"
 
 // ----------------------------------------------------------------------------
 // Transformer model structures (same as original)
